@@ -7,7 +7,7 @@ import { useMutation } from "@apollo/react-hooks";
 
 const { Text } = Typography;
 
-const Register = () => {
+const Register = (props) => {
   const schema = Yup.object().shape({
     email: Yup.string()
       .email()
@@ -30,42 +30,48 @@ const Register = () => {
   const [addUser] = useMutation(REGISTER_USER, {
     update(proxy, result) {
       console.log(result);
+      props.history.push("/")
+
     },
     onError(err){
-      console.log(err)
+      console.log("Error From onError")
     }
   }
   );
-
+  
   const [serverError,setServerError] =useState("")
-
-
+  
+  
   // const test= async()=>
   // {
-  //   const response= await addUser({
-  //     variables:{
-  //       email:"lol@gmail.com",
-  //       username:"LOL",
-  //       password:"11111111",
-  //       confirmPassword:'11111111'
-  //     },
-  //     errorPolicy:"all"
-  //       }
-  //   );
-    
-  // }
-
-  const onSubmit = async (data) => {
-    const response= await addUser({
-      variables:data,
-      errorPolicy:"all"
+    //   const response= await addUser({
+      //     variables:{
+        //       email:"lol@gmail.com",
+        //       username:"LOL",
+        //       password:"11111111",
+        //       confirmPassword:'11111111'
+        //     },
+        //     errorPolicy:"all"
+        //       }
+        //   );
+        
+        // }
+        
+        const onSubmit = async (data) => {
+          
+          const response= await addUser({
+            variables:data,
+            errorPolicy:"all"
+          }
+          );
+          console.log(response.errors)
+          if (response.errors){
+          setServerError(response.errors[0].message)
         }
-        );
-        setServerError(response.errors[0].message)
-  };
-
-  return (
-    <div className="formContainer">
+        };
+        
+        return (
+          <div className="formContainer">
       <form onSubmit={handleSubmit(onSubmit)}>
 {serverError && <h4 style={{color:'red'}}>{serverError}</h4>}
         <input
